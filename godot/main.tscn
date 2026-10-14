@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dp3iadhy7uxkf"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gnqfm"]
+size = Vector2(126, 128)
+
+[node name="Main" type="Node2D" unique_id=1475919709]
+
+[node name="Map" type="Map" parent="." unique_id=1389878046]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Map" unique_id=1166257878]
+polygon = PackedVector2Array(-376, 0, -377, -291, 360, -291, 360, 365, -1213, 362, -696, 0)
+
+[node name="Player" type="Player" parent="." unique_id=889988844]
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=1146767388]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=1667137643]
+shape = SubResource("RectangleShape2D_gnqfm")
