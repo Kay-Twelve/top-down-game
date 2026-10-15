@@ -1,3 +1,4 @@
+use crate::entities::InteractiveEntity;
 use crate::models;
 
 use godot::prelude::*;
@@ -5,7 +6,7 @@ use godot::classes::{ICharacterBody2D, CharacterBody2D, Input};
 
 #[derive(GodotClass)]
 #[class(base=CharacterBody2D)]
-struct Player {
+pub struct Player {
   #[export]
   speed: f32,
   base: Base<CharacterBody2D>,
@@ -19,6 +20,9 @@ impl Player {
     input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
   }
 }
+
+#[godot_dyn]
+impl InteractiveEntity for Player {}
 
 #[godot_api]
 impl ICharacterBody2D for Player {

@@ -1,3 +1,5 @@
+use crate::entities::{self, FollowEntity, InteractiveEntity};
+
 use godot::prelude::*;
 use godot::classes::{Area2D, IArea2D};
 
@@ -13,5 +15,12 @@ impl IArea2D for Map {
     Self {
       base
     }
+  }
+
+  fn ready(&mut self) {
+    let player = self.base().get_node_as::<entities::player::Player>("../Player");
+    let mut new_enemy = entities::enemy::Enemy::new("Test Enemy".into(), 80.);
+    self.base_mut().add_child(&new_enemy);
+    new_enemy.bind_mut().set_target_entity(player.into_dyn::<dyn InteractiveEntity>().upcast());
   }
 }
