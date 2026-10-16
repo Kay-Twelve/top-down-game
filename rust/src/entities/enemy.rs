@@ -23,8 +23,8 @@ impl ICharacterBody2D for Enemy {
     self.base_mut().add_child(&collision_shape);
   }
 
-  fn physics_process(&mut self, _: f64) {
-    self.follow_entity();
+  fn physics_process(&mut self, delta: f64) {
+    self.follow_entity(delta);
   }
 }
 
@@ -49,7 +49,7 @@ impl super::FollowEntity for Enemy {
     self._target_entity = Option::Some(entity);
   }
 
-  fn follow_entity(&mut self) {
+  fn follow_entity(&mut self, delta: f64) {
     let entity_gd = self._target_entity.as_mut().unwrap();
     let entity: &Node2D = entity_gd.upcast_mut();
     let entity_pos = entity.get_position();
@@ -60,11 +60,9 @@ impl super::FollowEntity for Enemy {
     };
 
     if distance_target.x.abs()>150. || distance_target.y.abs()>150. {
-      let x = if distance_target.x==0. { 0. } else { self.speed*(if distance_target.x>0. { 1. } else { -1. }) };
-      let y = if distance_target.y==0. { 0. } else { self.speed*(if distance_target.y>0. { 1. } else { -1. }) };
-
-      self.base_mut().set_velocity(Vector2 { x: x.round(), y: y.round() });
-      self.base_mut().move_and_slide();  
+      let x = if distance_target.x.round()==0. { 0. } else { (delta as f32)*self.speed*(if distance_target.x>0. { 1. } else { -1. }) };
+      let y = if distance_target.y.round()==0. { 0. } else { (delta as f32)*self.speed*(if distance_target.y>0. { 1. } else { -1. }) };
+      self.base_mut().move_and_collide(Vector2 { x, y });  
     }
   }
 }
