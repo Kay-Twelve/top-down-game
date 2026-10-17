@@ -1,5 +1,6 @@
 use std::ops::Deref;
 
+#[derive(Default)]
 pub struct TimeManager {
   pub current: f64
 }

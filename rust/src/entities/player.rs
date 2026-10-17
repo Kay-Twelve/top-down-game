@@ -9,9 +9,9 @@ use godot::classes::{ICharacterBody2D, CharacterBody2D, Input};
 pub struct Player {
   #[export]
   speed: f32,
-  base: Base<CharacterBody2D>,
   map: Option<Gd<crate::map::Map>>,
-  race_timer: models::timer::TimeManager
+  race_timer: models::timer::TimeManager,
+  base: Base<CharacterBody2D>
 }
 
 impl Player {
