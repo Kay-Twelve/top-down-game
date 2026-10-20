@@ -13,6 +13,7 @@ polygon = PackedVector2Array(-376, 0, -377, -291, 360, -291, 360, 365, -1213, 36
 [node name="Player" type="Player" parent="." unique_id=889988844]
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=1146767388]
+zoom = Vector2(0.5, 0.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=1667137643]
 shape = SubResource("RectangleShape2D_gnqfm")

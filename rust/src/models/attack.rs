@@ -1,12 +1,13 @@
 use godot::prelude::*;
 use godot::classes::{Area2D, IArea2D};
 
+use crate::models::motion_control_system::MotionControlSystem;
+
 #[derive(GodotClass)]
 #[class(init, base=Area2D)]
 pub struct Attack {
   _damage: f32,
-  _speed: f32,
-  _constant_speed: Vector2,
+  _motion_control_system: Gd<MotionControlSystem>,
   base: Base<Area2D>
 }
 
@@ -17,8 +18,7 @@ impl Attack {
     Gd::from_init_fn(|base| {
       Self {
         _damage,
-        _speed,
-        _constant_speed: Vector2::ZERO, 
+        _motion_control_system: MotionControlSystem::new(_speed),
         base
       }
     })
@@ -31,8 +31,7 @@ impl Attack {
   pub fn set_constant_speed(&mut self, _final_pos: Vector2) {
     let pos = self.base().get_position();
     let target_pos_vector = _final_pos-pos;
-    godot_print!("{:?}", target_pos_vector.normalized_or_zero());
-    self._constant_speed = target_pos_vector.normalized_or_zero()*self._speed;
+    self._motion_control_system.bind_mut().set_constant_speed(target_pos_vector.normalized_or_zero());
   }
 }
 
@@ -45,8 +44,8 @@ impl IArea2D for Attack {
     }));
   }
 
-  fn physics_process(&mut self, delta: f32) {
-    let new_pos = (self.base().get_position()+self._constant_speed);
+  fn physics_process(&mut self, _delta: f32) {
+    let new_pos = self.base().get_position()+self._motion_control_system.bind().get_constant_speed();
     self.base_mut().set_position(new_pos);
   }
 }
