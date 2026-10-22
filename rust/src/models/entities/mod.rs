@@ -1,3 +1,5 @@
+pub mod attack;
+
 use godot::prelude::*;
 use godot::classes::{CollisionShape2D, RectangleShape2D};
 
@@ -11,4 +13,15 @@ impl EntityCreator {
     collision_shape.set_shape(Option::Some(shape).as_ref());
     collision_shape
   }
+}
+
+pub trait InteractiveEntity: 'static {}
+
+pub trait FollowEntity {
+  fn set_a_target_for_pursuit(&mut self, entity: DynGd<Node2D, dyn InteractiveEntity>);
+  fn follow_entity(&mut self, delta: f32, entity_gd: &DynGd<Node2D, dyn InteractiveEntity>);
+}
+
+pub trait Attacking {
+  fn attack(&mut self, delta: f32, entity_gd: &DynGd<Node2D, dyn InteractiveEntity>);
 }

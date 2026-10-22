@@ -22,11 +22,12 @@ impl IRefCounted for MotionControlSystem {
 
 #[godot_api]
 impl MotionControlSystem {
-  pub fn new(_speed: f32) -> Gd<Self> {
+  pub fn new(_speed: f32, mut _constant_speed: Vector2) -> Gd<Self> {
+    _constant_speed = _constant_speed.normalized_or_zero()*_speed;
     Gd::from_init_fn(|base| {
       Self {
         _speed,
-        _constant_speed: Vector2::ZERO,
+        _constant_speed,
         base
       }
     })
@@ -36,8 +37,8 @@ impl MotionControlSystem {
     self._constant_speed
   }
 
-  pub fn set_constant_speed(&mut self, normalized_pos: Vector2) -> Vector2 {
-    self._constant_speed = normalized_pos*self._speed;
+  pub fn set_constant_speed(&mut self, normalized_vel: Vector2) -> Vector2 {
+    self._constant_speed = normalized_vel*self._speed;
     self._constant_speed
   }
 }

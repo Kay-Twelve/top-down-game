@@ -1,5 +1,5 @@
-use crate::entities::InteractiveEntity;
 use crate::models;
+use models::entities::InteractiveEntity;
 
 use godot::prelude::*;
 use godot::classes::{ICharacterBody2D, CharacterBody2D, Input};
@@ -31,7 +31,7 @@ impl ICharacterBody2D for Player {
       speed: 10.,
       base,
       map: Option::None,
-      race_timer: models::timer::TimeManager::new()
+      race_timer: models::timer::TimeManager::default()
     }
   }
 
@@ -39,7 +39,7 @@ impl ICharacterBody2D for Player {
     self.map = Option::Some(self.base().get_node_as::<crate::map::Map>("../Map"));
   }
 
-  fn physics_process(&mut self, delta: f64) {
+  fn physics_process(&mut self, delta: f32) {
     let map: &Gd<crate::map::Map> = self.map
       .as_ref()
       .expect("There is no node named {Map} in scene");
@@ -53,9 +53,7 @@ impl ICharacterBody2D for Player {
     if direction.x!=0. || direction.y!=0. {
       self.race_timer.update(delta);
 
-      let mut x = self.speed;
-      let mut y = self.speed;
-
+      let (mut x, mut y) = (self.speed, self.speed);
       if *self.race_timer>=5. {
         x += 7.;
         y += 4.;

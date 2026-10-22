@@ -1,5 +1,3 @@
-pub mod entity;
-pub mod hive_mind_system;
-pub mod motion_control_system;
+pub mod entities;
+pub mod systems;
 pub mod timer;
-pub mod attack;

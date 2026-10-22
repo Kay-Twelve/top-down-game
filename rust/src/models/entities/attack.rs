@@ -1,7 +1,7 @@
 use godot::prelude::*;
 use godot::classes::{Area2D, IArea2D};
 
-use crate::models::motion_control_system::MotionControlSystem;
+use crate::models::systems::motion_control_system::MotionControlSystem;
 
 #[derive(GodotClass)]
 #[class(init, base=Area2D)]
@@ -18,7 +18,7 @@ impl Attack {
     Gd::from_init_fn(|base| {
       Self {
         _damage,
-        _motion_control_system: MotionControlSystem::new(_speed),
+        _motion_control_system: MotionControlSystem::new(_speed, Vector2::ZERO),
         base
       }
     })
@@ -38,7 +38,7 @@ impl Attack {
 #[godot_api]
 impl IArea2D for Attack {
   fn ready(&mut self) {
-    self.base_mut().add_child(&super::entity::EntityCreator::add_collision_shape(Vector2 {
+    self.base_mut().add_child(&super::EntityCreator::add_collision_shape(Vector2 {
       x: 30.,
       y: 30.
     }));

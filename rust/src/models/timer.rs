@@ -1,18 +1,12 @@
 use std::ops::Deref;
 
-#[derive(Default)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub struct TimeManager {
-  pub current: f64
+  pub current: f32
 }
 
 impl TimeManager {
-  pub fn new() -> Self {
-    Self {
-      current: 0.0
-    }
-  }
-
-  pub fn update(&mut self, delta: f64) {
+  pub fn update(&mut self, delta: f32) {
     self.current += delta;
   }
 
@@ -22,7 +16,7 @@ impl TimeManager {
 }
 
 impl Deref for TimeManager {
-  type Target = f64;
+  type Target = f32;
 
   fn deref(&self) -> &Self::Target {
     &self.current
