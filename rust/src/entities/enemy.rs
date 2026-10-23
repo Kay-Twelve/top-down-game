@@ -1,7 +1,7 @@
 use godot::prelude::*;
 use godot::classes::{CharacterBody2D, ICharacterBody2D};
 
-use crate::models::{self, entities, systems, timer};
+use crate::models::{entities, systems, timer};
 use systems::{
     hive_mind_system::HiveMindSystem,
     motion_control_system::MotionControlSystem,
@@ -10,6 +10,7 @@ use systems::{
 use entities::{
     InteractiveEntity,
     Attacking, 
+    Movement,
     FollowEntity,
     EntityCreator
 };
@@ -43,24 +44,7 @@ impl ICharacterBody2D for Enemy {
     }
 
     fn physics_process(&mut self, delta: f32) {
-        self._decision._locomotion._cooldown.update(delta);
-        if let (
-            BehavioralStates::Persecution(TypeOfPersecution::FollowEntity), 
-            Option::Some(entity)
-        ) = (
-            &self._decision._locomotion._state, 
-            &self._decision._locomotion._target_entity
-        ) {
-            self.follow_entity(delta, &entity.clone());
-        } else if let BehavioralStates::RePositioning(time, pos) = &self._decision._locomotion._state {
-            let new_velocity = delta*(self._motion_control_system.bind().get_constant_speed());
-            self.base_mut().move_and_collide(new_velocity);
-        }
-
-        if *self._decision._locomotion._cooldown>=7.5 {
-            self._decision._locomotion._cooldown.reset();
-        }
-
+        self.to_move(delta);
     }
 }
 
@@ -116,7 +100,7 @@ impl Enemy {
 #[godot_dyn]
 impl InteractiveEntity for Enemy {}
 
-impl FollowEntity for Enemy {
+impl FollowEntity<bool> for Enemy {
     fn set_a_target_for_pursuit(&mut self, entity: DynGd<Node2D, dyn InteractiveEntity>) {
         self._decision._locomotion.set_target_entity(
             BehavioralStates::Persecution(TypeOfPersecution::FollowEntity), 
@@ -124,17 +108,15 @@ impl FollowEntity for Enemy {
         );
     }
 
-    fn follow_entity(&mut self, delta: f32, entity_gd: &DynGd<Node2D, dyn InteractiveEntity>) {
+    fn follow_entity(&mut self, entity_gd: &DynGd<Node2D, dyn InteractiveEntity>) -> bool {
         let entity: &Node2D = entity_gd.upcast_ref();
         let distance_target = (entity.get_position()-self.base().get_position()).round();
         if distance_target.length() > 200. {
-            let new_velocity = (delta)*(if *self._decision._locomotion._cooldown>=2. {
-                self._motion_control_system.bind_mut().set_constant_speed(distance_target.normalized_or_zero())
-            } else {
-                self._motion_control_system.bind().get_constant_speed()
-            });
-            self.base_mut().move_and_collide(new_velocity);
-        } 
+            if *self._decision._locomotion._cooldown>=2. {
+                self._motion_control_system.bind_mut().set_constant_speed(distance_target.normalized_or_zero());
+            }
+            true
+        } else { false }
     }
 }
 
@@ -150,3 +132,30 @@ impl Attacking for Enemy {
     }
 }
 
+impl Movement<bool> for Enemy {
+    fn to_move(&mut self, delta: f32) -> bool {
+        let mut must_move: bool = if let BehavioralStates::Inactive = self._decision._locomotion._state { false } else {
+            self._decision._locomotion._cooldown.update(delta);
+            true
+        };
+        if !must_move { return false; };
+
+        must_move = if let (
+            BehavioralStates::Persecution(TypeOfPersecution::FollowEntity), 
+            Option::Some(entity)
+        ) = (
+            &self._decision._locomotion._state, 
+            &self._decision._locomotion._target_entity
+        ) { self.follow_entity(&entity.clone()) } 
+        else { true };
+
+        if must_move {
+            let new_vel: Vector2 = delta*(self._motion_control_system.bind().get_constant_speed());
+            self.base_mut().move_and_collide(new_vel);
+        }
+
+        self._decision._locomotion._cooldown.reset_to_duration(2.);
+
+        must_move
+    }
+}

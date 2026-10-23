@@ -13,6 +13,13 @@ impl TimeManager {
   pub fn reset(&mut self) {
     self.current = 0.0;
   }
+
+  pub fn reset_to_duration(&mut self, duration: f32) -> bool {
+    if self.current>=duration {
+      self.reset();
+      true
+    } else { false }
+  }
 }
 
 impl Deref for TimeManager {

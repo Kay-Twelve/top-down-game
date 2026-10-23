@@ -8,7 +8,7 @@ size = Vector2(120, 120)
 [node name="Map" type="Map" parent="." unique_id=1389878046]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Map" unique_id=1166257878]
-polygon = PackedVector2Array(-376, 0, -377, -291, 360, -291, 360, 365, -1213, 362, -696, 0)
+polygon = PackedVector2Array(222, -292, 360, 365, -32, 579, -449, 579, -825, 372, -642, -292)
 
 [node name="Player" type="Player" parent="." unique_id=889988844]
 

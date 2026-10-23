@@ -17,11 +17,15 @@ impl EntityCreator {
 
 pub trait InteractiveEntity: 'static {}
 
-pub trait FollowEntity {
+pub trait FollowEntity<Response> {
   fn set_a_target_for_pursuit(&mut self, entity: DynGd<Node2D, dyn InteractiveEntity>);
-  fn follow_entity(&mut self, delta: f32, entity_gd: &DynGd<Node2D, dyn InteractiveEntity>);
+  fn follow_entity(&mut self, entity_gd: &DynGd<Node2D, dyn InteractiveEntity>) -> Response;
 }
 
 pub trait Attacking {
   fn attack(&mut self, delta: f32, entity_gd: &DynGd<Node2D, dyn InteractiveEntity>);
+}
+
+pub trait Movement<Response> {
+  fn to_move(&mut self, delta: f32) -> Response;
 }

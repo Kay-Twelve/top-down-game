@@ -24,7 +24,7 @@ impl HiveMindSystem {
   #[signal]
   pub fn retrieve_behavioral_refs(delta: f32);
 
-  pub fn on_retrieve_behavioral_refs(&mut self, delta: f32) {}
+  pub fn on_retrieve_behavioral_refs(&mut self, _delta: f32) {}
 
   pub fn add_entity(&mut self, entity: Gd<entities::enemy::Enemy>) {
     self.signals()
